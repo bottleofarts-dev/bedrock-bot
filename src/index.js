@@ -35,7 +35,7 @@ class Bot {
       username: config.username,
       offline: config.offline,
       version: config.version,       // explicit — never auto-negotiated
-      skinData: buildSkinData(),     // complete payload, no library defaults
+      // skinData: buildSkinData(),     // complete payload, no library defaults
     })
     this.gate = new PacketGate(this.client)
     this.movement = new Movement(this.gate, this.self, this.world)
@@ -130,7 +130,15 @@ class Bot {
     })
     c.on('disconnect', p => { log.warn(`disconnected: ${p?.message ?? 'unknown'}`); this.teardown(true) })
     c.on('close', () => { log.warn('connection closed'); this.teardown(true) })
-    c.on('error', e => { log.warn(`client error: ${e.message}`); this.teardown(true) })
+    c.on('error', e => {
+      // Ignore non-fatal packet read/decode errors (e.g. protodef PartialReadError on player_list)
+      if (e.message && (e.message.includes('Read error') || e.message.includes('PartialReadError') || e.message.includes('Unexpected buffer end'))) {
+        log.warn(`non-fatal packet decode warning: ${e.message}`)
+        return
+      }
+      log.warn(`client error: ${e.message}`)
+      this.teardown(true)
+    })
   }
   startLoop() {
     if (this.loop) return
