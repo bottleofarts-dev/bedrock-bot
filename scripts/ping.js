@@ -1,0 +1,10 @@
+require('dotenv').config()
+const { ping } = require('bedrock-protocol')
+ping({ host: process.env.SERVER_HOST, port: Number(process.env.SERVER_PORT || 19132) })
+  .then(res => {
+    console.log('Server version :', res.version)
+    console.log('Protocol number:', res.protocol)
+    console.log('\nSet MC_PROTOCOL_VERSION to the version string above, and confirm')
+    console.log('your pinned bedrock-protocol release explicitly supports that protocol.')
+  })
+  .catch(err => { console.error('Ping failed:', err.message); process.exit(1) })
