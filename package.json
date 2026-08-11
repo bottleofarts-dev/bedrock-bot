@@ -10,7 +10,7 @@
     "ping": "node scripts/ping.js"
   },
   "dependencies": {
-    "bedrock-protocol": "3.44.0",
+    "bedrock-protocol": "3.58.1",
     "prismarine-chunk": "1.36.0",
     "prismarine-registry": "1.11.0",
     "vec3": "0.1.10",
