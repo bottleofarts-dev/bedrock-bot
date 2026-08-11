@@ -98,10 +98,16 @@ The codebase is configured for seamless deployment as a background worker on Rai
      * `SERVER_PORT=56850`
      * `BOT_USERNAME=MinerBot`
      * `MC_PROTOCOL_VERSION=1.26.40`
-     * `OFFLINE_MODE=true` *(cracked mode enabled)*
+     * `OFFLINE_MODE=false` *(required for Bedrock/Geyser servers; prevents offline JWT rejections)*
      * `LOG_PACKETS_TO_CONSOLE=true` *(streams packet logs to Railway's **Deployments → Logs** viewer)*
-4. **Cracked Server / Offline Mode Login (`OFFLINE_MODE=true`)**:
-   * Because your server is cracked, the bot will bypass Microsoft/Xbox Live authentication entirely and join immediately upon starting.
+4. **Microsoft Account Authentication on Railway (`OFFLINE_MODE=false`)**:
+   * Even on cracked servers, Bedrock/Geyser servers reject self-signed offline login JWTs (`readNoHeader failed! packetId: 1`).
+   * When Railway starts the bot, open **Deployments → Logs** in Railway. You will see an Xbox Live authentication prompt:
+     ```
+     [msa] First time signing in. Please authenticate now:
+     To sign in, use a web browser to open the page https://www.microsoft.com/link and use the code XXXXXXXX
+     ```
+   * Open that link in your browser and enter the code. Railway caches the session token so it will connect and stay online 24/7!
 5. **No Public Networking Domain Needed**: Do **not** generate a public domain/HTTP route in Railway. Railway will automatically run `node src/index.js` as a background worker process.
 
 
