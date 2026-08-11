@@ -1,3 +1,6 @@
 node_modules/
 packets.log
 *.log
+gh-*.json
+*.token
+*.secret
