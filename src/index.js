@@ -35,7 +35,7 @@ class Bot {
       username: config.username,
       offline: config.offline,
       version: config.version,       // explicit — never auto-negotiated
-      // skinData: buildSkinData(),  // Omit custom skin so bedrock-protocol uses official vanilla defaultSkin on 1.26.40
+      skinData: buildSkinData(),     // Complete Classic (non-Persona) skin payload so cracked clients never get kicked
     })
     this.gate = new PacketGate(this.client)
     this.movement = new Movement(this.gate, this.self, this.world)

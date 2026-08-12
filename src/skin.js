@@ -1,24 +1,28 @@
 const crypto = require('crypto')
 const mcData = require('minecraft-data')('bedrock_1.26.40')
 
-// Complete clientData/skin payload for Bedrock 1.26.40 — prevents the
-// malformed skin broadcast failure mode where connected players get kicked
-// or crash when the server rebroadcasts the bot's clientData to them.
-// By merging with the official vanilla 1.26.40 defaultSkin from minecraft-data,
-// every required Persona geometry, animated face binding, and RGBA buffer is
-// 100% vanilla-compliant.
+// Complete Classic (non-Persona) clientData/skin payload for Bedrock 1.26.40.
+// Crucial for cracked servers: when PersonaSkin is true, cracked Bedrock
+// clients attempt to fetch Persona geometry from Microsoft PlayFab servers.
+// Because cracked clients lack Microsoft authentication, that PlayFab lookup
+// fails and crashes/kicks the connected player.
+// Setting PersonaSkin: false with standard built-in geometry forces all clients
+// to render the texture directly from the packet buffer without querying PlayFab.
 function buildSkinData() {
   const defaultSkin = mcData ? mcData.defaultSkin : {}
+  const b64 = s => Buffer.from(s).toString('base64')
   return {
     ...defaultSkin,
     SkinId: `${crypto.randomUUID()}.CustomSlim`,
-    PlayFabId: crypto.randomUUID().replace(/-/g, '').slice(0, 16),
+    PlayFabId: '',
     PersonaSkin: false,
     PremiumSkin: false,
     TrustedSkin: true,
     OverrideSkin: false,
     ArmSize: 'slim',
     SkinColor: '#0',
+    SkinResourcePatch: b64(JSON.stringify({ geometry: { default: 'geometry.humanoid.customSlim' } })),
+    SkinGeometryDataEngineVersion: '', // Required empty string for Bedrock >= 1.17.30
     DeviceId: crypto.randomUUID(),
     DeviceModel: 'PC',
     DeviceOS: 7,          // Windows 10
